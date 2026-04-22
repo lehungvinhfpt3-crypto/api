@@ -1,0 +1,23 @@
+{
+  "entities": {
+    "AccessCode": {
+      "title": "Access Code",
+      "description": "Mã truy cập dùng để xác minh người dùng.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "description": "Mã truy cập 6 ký tự." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Thời điểm tạo mã." },
+        "expiresAt": { "type": "string", "format": "date-time", "description": "Thời điểm hết hạn." },
+        "activated": { "type": "boolean", "description": "Trạng thái đã kích hoạt hay chưa." },
+        "activatedAt": { "type": "string", "format": "date-time", "description": "Thời điểm kích hoạt." }
+      },
+      "required": ["code", "createdAt", "expiresAt", "activated"]
+    }
+  },
+  "firestore": {
+    "access_codes": {
+      "schema": "AccessCode",
+      "description": "Bộ sưu tập lưu trữ các mã truy cập dùng chung."
+    }
+  }
+}

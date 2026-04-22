@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    
+    function isValidAccessCode(data) {
+      return data.keys().hasAll(['code', 'createdAt', 'expiresAt', 'activated']) &&
+             data.keys().size() >= 4 &&
+             data.code is string && data.code.size() == 6 &&
+             data.createdAt is timestamp &&
+             data.expiresAt is timestamp &&
+             data.activated is bool;
+    }
+
+    match /access_codes/{codeId} {
+      allow read: if true; // Publicly readable for verification
+      
+      allow create: if isValidId(codeId) && isValidAccessCode(request.resource.data);
+      
+      allow update: if isValidId(codeId) && isValidAccessCode(request.resource.data) && (
+        // Action: Kích hoạt mã
+        (resource.data.activated == false && request.resource.data.activated == true &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['activated', 'activatedAt'])) ||
+        // Admin update (Xóa/Sửa thì admin mới làm, nhưng vì không có Auth nên tạm để true cho prototype)
+        true
+      );
+      
+      allow delete: if true; // Hỗ trợ xóa thủ công từ giao diện
+    }
+  }
+}

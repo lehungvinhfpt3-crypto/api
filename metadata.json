@@ -1,0 +1,6 @@
+{
+  "name": "Máy tính có xác minh mã",
+  "description": "Ứng dụng máy tính bảo mật với hệ thống quản trị mã truy cập thời gian thực.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
